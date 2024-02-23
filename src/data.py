@@ -93,11 +93,7 @@ class AIF:
         
 
 
-    def get_speaker(self, 
-        node_id: int, 
-        locutions: List[Dict[str, int]], 
-        participants: List[Dict[str, str]]
-        ) -> str:
+    def get_speaker(self, node_id: int, locutions: List[Dict[str, int]], participants: List[Dict[str, str]]) -> str:
         """
         Takes a node ID, a list of locutions, and a list of participants, and returns the name of the participant who spoke the locution with the given node ID, or "None" 
         if the node ID is not found.
@@ -131,15 +127,7 @@ class AIF:
         else:
             return ("None None","None")
 
-    def create_entry(
-        self,
-        nodes, 
-        edges,
-        prediction,
-        index1,
-        index2
-
-        ):
+    def create_entry(self,nodes, edges, prediction, index1, index2):
         if prediction == "RA":
             node_id = AIF.get_next_max_id(nodes, 'nodeID')
             edge_id = AIF.get_next_max_id(edges, 'edgeID')		
