@@ -14,26 +14,42 @@ class BertArgumentStructure:
 		"""Load the contents of the config.json file."""
 		with open(file_path, 'r') as config_file:
 			config_data = json.load(config_file)
+			
 			return config_data.get('model_path')
-
-	def get_argument_structure(self, ):
-		data = Data(self.file_obj)
-		if not data.is_valid_json(): 
+			
+	def get_argument_structure(self):
+		data = self.get_json_data()
+		if not data:
 			return "Invalid input"
 		
 		x_aif = data.get_aif()
 		aif = x_aif.get('AIF', {})
-		nodes, edges = aif.get('nodes', []), aif.get('edges', [])		
-		if 'nodes' not in aif or 'locutions' not in aif or 'edges' not in aif:
-			return "Invalid json-aif"		
+		if not self.is_valid_aif(aif):
+			return "Invalid json-aif"
+
+		propositions_id_pairs = self.get_propositions_id_pairs(aif)
+		self.update_propositions_relations(propositions_id_pairs, aif)
+
+		return self.format_output(x_aif, aif)
+
+	def get_json_data(self):
+		data = Data(self.file_obj)
+		return data if data.is_valid_json() else None
+
+	def is_valid_aif(self, aif):
+		return 'nodes' in aif and 'edges' in aif
+
+	def get_propositions_id_pairs(self, aif):
 		propositions_id_pairs = {}
-		for node in nodes:
+		for node in aif.get('nodes', []):
 			if node.get('type') == "I":
 				proposition = node.get('text', '').strip()
 				if proposition:
 					node_id = node.get('nodeID')
 					propositions_id_pairs[node_id] = proposition
-        
+		return propositions_id_pairs
+
+	def update_propositions_relations(self, propositions_id_pairs, aif):
 		checked_pairs = set()
 		for prop1_node_id, prop1 in propositions_id_pairs.items():
 			for prop2_node_id, prop2 in propositions_id_pairs.items():
@@ -44,8 +60,11 @@ class BertArgumentStructure:
 						checked_pairs.add(pair1)
 						checked_pairs.add(pair2)
 						prediction = self.model.predict((prop1, prop2))
-						nodes, edges = AIF.create_entry(nodes, edges, prediction, prop1_node_id, prop2_node_id)
-		return BertTEOutput.format_output(nodes, edges, x_aif, aif)
+						AIF.create_entry(aif['nodes'], aif['edges'], prediction, prop1_node_id, prop2_node_id)
+
+	def format_output(self, x_aif, aif):
+		return BertTEOutput.format_output(x_aif['AIF']['nodes'], x_aif['AIF']['edges'], x_aif, aif)
+
 
 
 

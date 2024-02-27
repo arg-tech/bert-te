@@ -128,23 +128,24 @@ class AIF:
             return ("None None","None")
 
     def create_entry(self,nodes, edges, prediction, index1, index2):
-        if prediction == "RA":
-            node_id = AIF.get_next_max_id(nodes, 'nodeID')
-            edge_id = AIF.get_next_max_id(edges, 'edgeID')		
-            nodes.append({'text': 'Default Inference', 'type':'RA','nodeID': node_id})					
-            edges.append({'fromID': index1, 'toID': node_id,'edgeID':edge_id})	
-            edge_id = AIF.get_next_max_id(edges, 'edgeID')				
-            edges.append({'fromID': node_id, 'toID': index2,'edgeID':edge_id})
 
-        if prediction == "CA":				
-            node_id = AIF.get_next_max_id(nodes, 'nodeID')
-            edge_id = AIF.get_next_max_id(edges, 'edgeID')
-            nodes.append({'text': 'Default Conflict', 'type':'CA','nodeID': node_id})				
-            edges.append({'fromID': index1, 'toID': node_id,'edgeID':edge_id})
-            edge_id = AIF.get_next_max_id(edges, 'edgeID')
-            edges.append({'fromID': node_id, 'toID': index2,'edgeID':edge_id})
-            node_id = node_id + 1
-        return (nodes, edges)
+        if prediction == "RA":
+            AR_text = "Default Inference"
+            AR_type = "RA"
+        elif prediction == "CA":	
+            AR_text = "Default Conflict"
+            AR_type = "CA"
+        elif prediction == "MA":	
+            AR_text = "Default Rephrase"
+            AR_type = "MA"		
+        node_id = AIF.get_next_max_id(nodes, 'nodeID')
+        edge_id = AIF.get_next_max_id(edges, 'edgeID')
+        nodes.append({'text': AR_text, 'type':AR_type,'nodeID': node_id})				
+        edges.append({'fromID': index1, 'toID': node_id,'edgeID':edge_id})
+        edge_id = AIF.get_next_max_id(edges, 'edgeID')
+        edges.append({'fromID': node_id, 'toID': index2,'edgeID':edge_id})
+
+        
     
     def get_i_node_ya_nodes_for_l_node(self, edges, n_id):
         """traverse through edges and returns YA node_ID and I node_ID, given L node_ID"""
