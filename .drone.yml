@@ -1,0 +1,7 @@
+kind: template
+load: docker-compose-(default).yaml
+data:
+    server: 212.71.250.173
+    user: cameron
+    secrets: null
+    
