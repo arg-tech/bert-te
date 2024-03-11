@@ -14,8 +14,6 @@ logging.basicConfig(datefmt='%H:%M:%S', level=logging.DEBUG)
 app = Flask(__name__)
 metrics = PrometheusMetrics(app)
 
-
-@app.route('/propositionUnitizer-01', methods = ['GET', 'POST'])
 @metrics.summary('requests_by_status', 'Request latencies by status',
                  labels={'status': lambda r: r.status_code})
 @metrics.histogram('requests_by_status_and_path', 'Request latencies by status and path',
