@@ -1,4 +1,11 @@
-flask
-flask_uploads
-prometheus_flask_exporter
+flask==3.0.2
+flask_uploads==0.2.1
+prometheus_flask_exporter==0.23.0
+
+torch==2.2.1
+numpy==1.26.4
+transformers==4.38.2
+Cython==3.0.9
+
+tqdm==4.66.2
 

@@ -1,20 +1,28 @@
-import json
-from src.models import Model
 from src.data import Data, AIF
-from src.templates import BertTEOutput
+
+from itertools import combinations
+
+
+def divide_chunks(l, n):
+    # looping till length l
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
 
 class BertArgumentStructure:
-    def __init__(self,file_obj):
+    def __init__(self,file_obj, model, batch_size=8):
         self.file_obj = file_obj
-        self.config_file_path = "'config/config.json'"
-        self.model_path = self.load_config(self.config_file_path)
-        self.model = Model(self.model_path)
 
-    def load_config(self, file_path):
-        """Load the contents of the config.json file to get the model files."""
-        with open(file_path, 'r') as config_file:
-            config_data = json.load(config_file)
-            return config_data.get('model_path')
+        self.model = model
+        self.batch_size = batch_size
+
+    def get_argument_structure_from_json(self, xaif_dict):
+        aif = xaif_dict.get('AIF', {})
+
+        propositions_id_pairs = self.get_propositions_id_pairs(aif)
+        self.update_node_edge_with_relations(propositions_id_pairs, aif)
+
+        return self.format_output(xaif_dict, aif)
+
 
     def get_argument_structure(self):
         """Retrieve the argument structure from the input data."""
@@ -56,18 +64,35 @@ class BertArgumentStructure:
         """
         Update the nodes and edges in the AIF structure to reflect the new relations between propositions.
         """
-        checked_pairs = set()
-        for prop1_node_id, prop1 in propositions_id_pairs.items():
-            for prop2_node_id, prop2 in propositions_id_pairs.items():
-                if prop1_node_id != prop2_node_id:
-                    pair1 = (prop1_node_id, prop2_node_id)
-                    pair2 = (prop2_node_id, prop1_node_id)
-                    if pair1 not in checked_pairs and pair2 not in checked_pairs:
-                        checked_pairs.add(pair1)
-                        checked_pairs.add(pair2)
-                        prediction = self.model.predict((prop1, prop2))
-                        AIF.create_entry(aif['nodes'], aif['edges'], prediction, prop1_node_id, prop2_node_id)
+
+        node_ids_combs = list(combinations(
+            list(propositions_id_pairs.keys()), 2
+        ))
+
+
+        for batch_node_pairs in divide_chunks(node_ids_combs, self.batch_size):
+
+            batch_proposition_pairs = [
+                [propositions_id_pairs[node_id_1], propositions_id_pairs[node_id_2]]
+                for node_id_1, node_id_2 in batch_node_pairs
+            ]
+            batch_preds = self.model.predict_pairs_batch(
+                proposition_pairs=batch_proposition_pairs
+            )
+
+            for node_ids_pair, prediction in zip(batch_node_pairs, batch_preds):
+                AIF.create_entry(
+                    aif['nodes'], aif['edges'],
+                    prediction, node_ids_pair[0], node_ids_pair[1]
+                )
 
     def format_output(self, x_aif, aif):
         """Format the output data."""
-        return BertTEOutput.format_output(x_aif['AIF']['nodes'], x_aif['AIF']['edges'], x_aif, aif)
+
+        xaif_output = {}
+        xaif_output["nodes"] = x_aif['AIF']['nodes'].copy()
+        xaif_output["edges"] = x_aif['AIF']['edges'].copy()
+        xaif_output["AIF"] = aif.copy()
+        return xaif_output
+
+        # return BertTEOutput.format_output(x_aif['AIF']['nodes'], x_aif['AIF']['edges'], x_aif, aif)
