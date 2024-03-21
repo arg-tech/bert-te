@@ -40,13 +40,15 @@ class Data:
             return self.f_name
     
 class AIF:
-    def __init__(self, ):
-        pass
-    def is_valid_json_aif(sel,aif_nodes):
+
+    @classmethod
+    def is_valid_json_aif(cls,aif_nodes):
         if 'nodes' in aif_nodes and 'locutions' in aif_nodes and 'edges' in aif_nodes:
             return True
         return False
-    def is_json_aif_dialog(self, aif_nodes: list) -> bool:
+
+    @classmethod
+    def is_json_aif_dialog(cls, aif_nodes: list) -> bool:
         ''' check if json_aif is dialog
         '''
 
@@ -57,7 +59,8 @@ class AIF:
     
 
 
-    def get_next_max_id(self, nodes, n_type):
+    @classmethod
+    def get_next_max_id(cls, nodes, n_type):
         """
        Takes a list of nodes (edges) and returns the maximum node/edge ID.
         Arguments:
@@ -93,7 +96,8 @@ class AIF:
         
 
 
-    def get_speaker(self, node_id: int, locutions: List[Dict[str, int]], participants: List[Dict[str, str]]) -> str:
+    @classmethod
+    def get_speaker(cls, node_id: int, locutions: List[Dict[str, int]], participants: List[Dict[str, str]]) -> str:
         """
         Takes a node ID, a list of locutions, and a list of participants, and returns the name of the participant who spoke the locution with the given node ID, or "None" 
         if the node ID is not found.
@@ -127,7 +131,12 @@ class AIF:
         else:
             return ("None None","None")
 
-    def create_entry(self,nodes, edges, prediction, index1, index2):
+    @classmethod
+    def create_entry(cls, nodes, edges, prediction, index1, index2):
+        if prediction not in [
+            "RA", "CA", "MA"
+        ]:
+            return
 
         if prediction == "RA":
             AR_text = "Default Inference"
@@ -138,16 +147,17 @@ class AIF:
         elif prediction == "MA":	
             AR_text = "Default Rephrase"
             AR_type = "MA"		
-        node_id = AIF.get_next_max_id(nodes, 'nodeID')
-        edge_id = AIF.get_next_max_id(edges, 'edgeID')
+        node_id = cls.get_next_max_id(nodes, 'nodeID')
+        edge_id = cls.get_next_max_id(edges, 'edgeID')
         nodes.append({'text': AR_text, 'type':AR_type,'nodeID': node_id})				
         edges.append({'fromID': index1, 'toID': node_id,'edgeID':edge_id})
-        edge_id = AIF.get_next_max_id(edges, 'edgeID')
+        edge_id = cls.get_next_max_id(edges, 'edgeID')
         edges.append({'fromID': node_id, 'toID': index2,'edgeID':edge_id})
 
         
     
-    def get_i_node_ya_nodes_for_l_node(self, edges, n_id):
+    @classmethod
+    def get_i_node_ya_nodes_for_l_node(cls, edges, n_id):
         """traverse through edges and returns YA node_ID and I node_ID, given L node_ID"""
         for entry in edges:
             if n_id == entry['fromID']:
@@ -159,7 +169,8 @@ class AIF:
         return None, None
     
 
-    def remove_entries(self, l_node_id, nodes, edges, locutions):
+    @classmethod
+    def remove_entries(cls, l_node_id, nodes, edges, locutions):
         """
         Removes entries associated with a specific node ID from a JSON dictionary.
 
@@ -171,7 +182,7 @@ class AIF:
         - (Dict): the edited JSON dictionary with entries associated with the specified node ID removed
         """
         # Remove nodes with the specified node ID
-        in_id, yn_id = self.get_i_node_ya_nodes_for_l_node(edges, l_node_id)
+        in_id, yn_id = cls.get_i_node_ya_nodes_for_l_node(edges, l_node_id)
         edited_nodes = [node for node in nodes if node.get('nodeID') != l_node_id]
         edited_nodes = [node for node in edited_nodes if node.get('nodeID') != in_id]
 
@@ -186,7 +197,8 @@ class AIF:
         return edited_nodes, edited_edges, edited_locutions
     
 
-    def get_xAIF_arrays(self, aif_section: dict, xaif_elements: List) -> tuple:
+    @classmethod
+    def get_xAIF_arrays(cls, aif_section: dict, xaif_elements: List) -> tuple:
         """
         Extracts values associated with specified keys from the given AIF section dictionary.
 

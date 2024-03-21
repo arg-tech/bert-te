@@ -1,4 +1,4 @@
 {
-    "model_path": "facebook/bart-large-mnli"
+    "model_path": "valhalla/distilbart-mnli-12-1"
   }
   
