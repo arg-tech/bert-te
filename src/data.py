@@ -69,6 +69,9 @@ class AIF:
         - (int): the maximum node/edge ID in the list of nodes
         """
 
+        if not len(nodes):
+            return 0
+
         max_id, lef_n_id, right_n_id = 0, 0, ""
         if isinstance(nodes[0][n_type],str): # check if the node id is a text or integer
             if "_" in nodes[0][n_type]:
