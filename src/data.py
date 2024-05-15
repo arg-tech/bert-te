@@ -23,15 +23,15 @@ class Data:
         return False
         
 
-    def get_aif(self):
-        if self.is_valid_json(format='xAIF'):
+    def get_aif(self,format='xAIF'):
+        if self.is_valid_json():
             with open(self.f_name) as file:
                 data = file.read()
                 x_aif = json.loads(data)
                 if format == "xAIF":
                     return x_aif
                 else:
-                    aif = x_aif.get('AIF')
+                    aif = x_aif.get('aif')
                     return json.dumps(aif)
         else:
             return "Invalid json"
@@ -128,22 +128,23 @@ class AIF:
             return ("None None","None")
 
     def create_entry(self,nodes, edges, prediction, index1, index2):
+        if prediction in ['RA','MA','CA']:
 
-        if prediction == "RA":
-            AR_text = "Default Inference"
-            AR_type = "RA"
-        elif prediction == "CA":	
-            AR_text = "Default Conflict"
-            AR_type = "CA"
-        elif prediction == "MA":	
-            AR_text = "Default Rephrase"
-            AR_type = "MA"		
-        node_id = AIF.get_next_max_id(nodes, 'nodeID')
-        edge_id = AIF.get_next_max_id(edges, 'edgeID')
-        nodes.append({'text': AR_text, 'type':AR_type,'nodeID': node_id})				
-        edges.append({'fromID': index1, 'toID': node_id,'edgeID':edge_id})
-        edge_id = AIF.get_next_max_id(edges, 'edgeID')
-        edges.append({'fromID': node_id, 'toID': index2,'edgeID':edge_id})
+            if prediction == "RA":
+                AR_text = "Default Inference"
+                AR_type = "RA"
+            elif prediction == "CA":	
+                AR_text = "Default Conflict"
+                AR_type = "CA"
+            elif prediction == "MA":	
+                AR_text = "Default Rephrase"
+                AR_type = "MA"		
+            node_id = self.get_next_max_id(nodes, 'nodeID')
+            edge_id = self.get_next_max_id(edges, 'edgeID')
+            nodes.append({'text': AR_text, 'type':AR_type,'nodeID': node_id})				
+            edges.append({'fromID': index1, 'toID': node_id,'edgeID':edge_id})
+            edge_id = self.get_next_max_id(edges, 'edgeID')
+            edges.append({'fromID': node_id, 'toID': index2,'edgeID':edge_id})
 
         
     

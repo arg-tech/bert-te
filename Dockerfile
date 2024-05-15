@@ -11,6 +11,7 @@ RUN pip3 install torch
 RUN pip3 install numpy
 RUN pip3 install transformers
 RUN pip3 install Cython
+RUN pip3 install xaif_eval
 
 
 COPY . /app

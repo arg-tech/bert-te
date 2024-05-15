@@ -27,9 +27,9 @@ class Model:
         true_prob2 = self._get_prob(text2, text1)
         true_prob = max(true_prob1, true_prob2)
         
-        if true_prob > self.RA_THRESHOLD:
+        if true_prob > self.RA_TRESHOLD:
             arg_rel = "RA"
-        elif true_prob < self.CA_THRESHOLD:
+        elif true_prob < self.CA_TRESHOLD:
             arg_rel = "CA"
         else:
             arg_rel = "None"

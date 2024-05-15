@@ -1,41 +1,68 @@
 import json
-from src.models import Model
 from src.data import Data, AIF
-from src.templates import BertTEOutput
+from xaif_eval import xaif
 
 class BertArgumentStructure:
-    def __init__(self,file_obj):
+    def __init__(self,file_obj,model):
         self.file_obj = file_obj
-        self.config_file_path = "'config/config.json'"
-        self.model_path = self.load_config(self.config_file_path)
-        self.model = Model(self.model_path)
 
-    def load_config(self, file_path):
-        """Load the contents of the config.json file to get the model files."""
-        with open(file_path, 'r') as config_file:
-            config_data = json.load(config_file)
-            return config_data.get('model_path')
+
+        self.model = model
+
+        self.file_obj = file_obj
+        self.f_name = file_obj.filename
+        self.file_obj.save(self.f_name)
+        file = open(self.f_name,'r')
+
+        xAIF_input = self.get_aif()  
+        self.aif_obj = xaif.AIF(xAIF_input)
+
+    def is_valid_json(self):
+        ''' check if the file is valid json
+		'''
+
+        try:
+            json.loads(open(self.f_name).read())
+        except ValueError as e:			
+            return False
+
+        return True
+    def is_valid_json_aif(sel,aif_nodes):
+        if 'nodes' in aif_nodes and 'locutions' in aif_nodes and 'edges' in aif_nodes:
+            return True
+        return False
+
+    def get_aif(self, format='xAIF'):
+        if self.is_valid_json():
+            with open(self.f_name) as file:
+                data = file.read()
+                x_aif = json.loads(data)
+                if format == "xAIF":
+                    return x_aif
+                else:
+                    aif = x_aif.get('AIF')
+                    return json.dumps(aif)
+        else:
+            return "Invalid json"
+
+
 
     def get_argument_structure(self):
         """Retrieve the argument structure from the input data."""
-        data = self.get_json_data()
+        data = self.get_aif()
         if not data:
             return "Invalid input"
         
-        x_aif = data.get_aif()
-        aif = x_aif.get('AIF', {})
+        x_aif = self.aif_obj.xaif
+        aif =  self.aif_obj.aif
         if not self.is_valid_aif(aif):
             return "Invalid json-aif"
 
         propositions_id_pairs = self.get_propositions_id_pairs(aif)
-        self.update_node_edge_with_relations(propositions_id_pairs, aif)
+        self.update_node_edge_with_relations(propositions_id_pairs)
 
-        return self.format_output(x_aif, aif)
+        return x_aif
 
-    def get_json_data(self):
-        """Retrieve JSON data from the file."""
-        data = Data(self.file_obj)
-        return data if data.is_valid_json() else None
 
     def is_valid_aif(self, aif):
         """Check if the AIF data is valid."""
@@ -52,7 +79,7 @@ class BertArgumentStructure:
                     propositions_id_pairs[node_id] = proposition
         return propositions_id_pairs
     
-    def update_node_edge_with_relations(self, propositions_id_pairs, aif):
+    def update_node_edge_with_relations(self, propositions_id_pairs):
         """
         Update the nodes and edges in the AIF structure to reflect the new relations between propositions.
         """
@@ -66,8 +93,8 @@ class BertArgumentStructure:
                         checked_pairs.add(pair1)
                         checked_pairs.add(pair2)
                         prediction = self.model.predict((prop1, prop2))
-                        AIF.create_entry(aif['nodes'], aif['edges'], prediction, prop1_node_id, prop2_node_id)
+                        if prediction in ['RA','MA','CA']:
+                            self.aif_obj.add_component("argument_relation", prediction, prop1_node_id, prop2_node_id)
+                        
 
-    def format_output(self, x_aif, aif):
-        """Format the output data."""
-        return BertTEOutput.format_output(x_aif['AIF']['nodes'], x_aif['AIF']['edges'], x_aif, aif)
+
