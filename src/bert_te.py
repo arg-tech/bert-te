@@ -1,7 +1,7 @@
 import json
 from src.data import Data, AIF
 from xaif_eval import xaif
-
+from itertools import combinations
 class BertArgumentStructure:
     def __init__(self,file_obj,model):
         self.file_obj = file_obj
@@ -79,7 +79,7 @@ class BertArgumentStructure:
                     propositions_id_pairs[node_id] = proposition
         return propositions_id_pairs
     
-    def update_node_edge_with_relations(self, propositions_id_pairs):
+    def update_node_edge_with_relations_(self, propositions_id_pairs):
         """
         Update the nodes and edges in the AIF structure to reflect the new relations between propositions.
         """
@@ -92,9 +92,34 @@ class BertArgumentStructure:
                     if pair1 not in checked_pairs and pair2 not in checked_pairs:
                         checked_pairs.add(pair1)
                         checked_pairs.add(pair2)
-                        prediction = self.model.predict((prop1, prop2))
-                        if prediction in ['RA','MA','CA']:
-                            self.aif_obj.add_component("argument_relation", prediction, prop1_node_id, prop2_node_id)
-                        
+                        predictions = self.model.predict((prop1, prop2))
+                        for prediction in predictions:
+                            if prediction in ['RA','MA','CA']:
+                                self.aif_obj.add_component("argument_relation", prediction, prop1_node_id, prop2_node_id)
+                            
 
 
+
+    def update_node_edge_with_relations(self, propositions_id_pairs, batch_size=4):
+        """
+        Update the nodes and edges in the AIF structure to reflect the new relations between propositions.
+        """
+        pairs_to_predict = []
+        pair_ids = []
+
+        # Use combinations to create pairs without redundant checking
+        for (prop1_node_id, prop1), (prop2_node_id, prop2) in combinations(propositions_id_pairs.items(), 2):
+            pairs_to_predict.append(prop1+ "" + prop2)
+            pair_ids.append((prop1_node_id, prop2_node_id))
+
+        # Process pairs in batches
+        for i in range(0, len(pairs_to_predict), batch_size):
+            batch_pairs = pairs_to_predict[i:i+batch_size]
+            batch_pair_ids = pair_ids[i:i+batch_size]
+            
+            # Assuming `self.model.predict` can handle batches of inputs
+            predictions = self.model.predict(batch_pairs)
+            
+            for (prop1_node_id, prop2_node_id), prediction in zip(batch_pair_ids, predictions):
+                if prediction in ['RA', 'MA', 'CA']:
+                    self.aif_obj.add_component("argument_relation", prediction, prop1_node_id, prop2_node_id)
