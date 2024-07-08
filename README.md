@@ -407,6 +407,6 @@ The service can also be used to create a pipeline on our n8n interface. Simply c
 
 
 <div style="text-align:center;">
-    <img src="img/n8n_screnshot.png" alt="Image Description" width="100%">
+    <img src="img/n8n_screnshot.jpeg" alt="Image Description" width="100%">
 </div>
 
