@@ -32,15 +32,12 @@ Brief overview of the architecture/method used.
   - **POST**: Expects a file upload (`file` parameter) in the xAIF format.
 - **Output**:
   - **Response**: The inferred argument structure in xAIF json file format, containing nodes, edges, locutions, and other relevant information.
-  - **Example Response**: Example JSON response.
+
 
 ## Input and Output Formats
-
 ### Input Format
 - **Text File**: xAIF format input ([xAIF format details](https://wiki.arg.tech/books/amf/page/xaif)).
-
 - ** Input Example **: 
-To display the second JSON in a beautiful format on Markdown, you can use the same method with the triple backticks for code blocks and specify `json` as the language. Here's how you can format it:
 
 ```python
 {
@@ -169,8 +166,6 @@ The inferred argument structure is returned in the xAIF format, containing nodes
 - Argument relations are represented as "RA" type for support and "CA" type for attack relations.
 - The relations between the "I" nodes and argument relation nodes are presented as edges.
 - Example Output:
-
-
 
 ```python
 {
@@ -308,18 +303,15 @@ The inferred argument structure is returned in the xAIF format, containing nodes
 
 
 ## Installation
-
 ### Requirements for Installation
-torch
-numpy
-transformers
-xaif_eval==0.0.9
-amf-fast-inference==0.0.3
-markdown2
-
+- torch
+- numpy
+- transformers
+- xaif_eval==0.0.9
+- amf-fast-inference==0.0.3
+- markdown2
 
 ### Installation Setup
-
 #### Using Docker Container
 
 To set up the BERT Textual Entailment Service using Docker, follow these steps:
@@ -345,7 +337,6 @@ To set up the BERT Textual Entailment Service using Docker, follow these steps:
 #### From Source Without Docker
 
 If you prefer to install without Docker:
-
 1. **Install Dependencies:**
    - Ensure Python and necessary libraries are installed.
 
@@ -356,12 +347,9 @@ If you prefer to install without Docker:
      python main.py
      ```
 
-
-
 ## Usage
 
 ### Using Programming Interface
-
 #### Example Python Code Snippet
 
 ```python
@@ -397,14 +385,9 @@ curl -X POST \
   http://your-server-url/bert-te
 ```
 
-
-
 ### Using Web Interface
 
-The service can also be used to create a pipeline on our n8n interface. Simply create an HTTP node, configure the node including the URL of the service and the parameter name of the file (`file`).
-
-
-
+The service can also be used to create a pipeline on our n8n interface. Create an HTTP node, configure the node including specifying the URL of the service and the parameter  (`file`).
 
 <div style="text-align:center;">
     <img src="img/n8n_screnshot.jpeg" alt="Image Description" width="100%">
