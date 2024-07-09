@@ -32,7 +32,7 @@ Brief overview of the architecture/method used.
 ## Input and Output Formats
 ### Input Format
 - **Text File**: xAIF format input ([xAIF format details](https://wiki.arg.tech/books/amf/page/xaif)).
-- ** Input Example **: 
+- **Example**: 
 
 ```python
 {
@@ -296,7 +296,7 @@ The inferred argument structure is returned in the xAIF format, containing nodes
 }
 ```
 
-
+#
 ## Installation
 ### Requirements for Installation
 - torch
