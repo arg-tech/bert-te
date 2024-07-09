@@ -19,19 +19,14 @@ Brief overview of the architecture/method used.
 
 ### /bert-te
 
-#### Description
-- **Methods**: `GET`, `POST`
-  - **GET**: Returns information about Service and its usage.
-  - **POST**: Expects a file upload (`file` parameter) in the xAIF format. The Flask route processes the uploaded file identify argument relation between I-nodes and update the xAIF node to represent the argument relations and returns the updated xAIF as a json file. 
-
 #### Details
 - **URL**: `/bert-te`
 - **Methods**: `GET`, `POST`
 - **Input**:
-  - **GET**: No parameters.
+  - **GET**: No parameters. Returns information about Service and its usage.
   - **POST**: Expects a file upload (`file` parameter) in the xAIF format.
 - **Output**:
-  - **Response**: The inferred argument structure in xAIF json file format, containing nodes, edges, locutions, and other relevant information.
+  - **Response**: The route processes the uploaded file, identify argument relation between I-nodes, update the xAIF with the argument relations and returns the updated xAIF as a json file. 
 
 
 ## Input and Output Formats
@@ -337,6 +332,7 @@ To set up the BERT Textual Entailment Service using Docker, follow these steps:
 #### From Source Without Docker
 
 If you prefer to install without Docker:
+
 1. **Install Dependencies:**
    - Ensure Python and necessary libraries are installed.
 
@@ -360,17 +356,25 @@ url = 'http://your-server-url/bert-te'
 input_file_path = 'example_xAIF.json'
 
 with open(input_file_path, 'r', encoding='utf-8') as file:
+
     files = {'file': (input_file_path, file, 'application/json')}
 
 response = requests.post(url, files=files)
 
 if response.status_code == 200:
+
     output_file_path = 'output_xAIF.json'
+
     with open(output_file_path, 'w', encoding='utf-8') as output_file:
+
         json.dump(response.json(), output_file, ensure_ascii=False, indent=4)
+
     print(f'Response saved to {output_file_path}')
+
 else:
+
     print(f'Failed to make a POST request. Status code: {response.status_code}')
+
     print(response.text)
 
 ```
