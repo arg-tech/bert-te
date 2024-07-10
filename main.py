@@ -33,6 +33,7 @@ model = Model(model_path)
                    labels={'status': lambda r: r.status_code, 'path': lambda: request.path})
 @handle_errors
 @app.route('/bert-te', methods = ['GET', 'POST'])
+#
 def bertte():
 	if request.method == 'POST':
 		file_obj = request.files['file']
