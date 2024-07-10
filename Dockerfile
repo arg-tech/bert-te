@@ -27,8 +27,8 @@ RUN python -m venv /opt/venv && \
 COPY . .
 
 # Use a non-root user for security
-RUN useradd --create-home appuser
-USER appuser
+#RUN useradd --create-home appuser
+#USER appuser
 
 # Expose the port the app runs on
 EXPOSE 5002

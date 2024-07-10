@@ -2,7 +2,7 @@
 
 # Default BART Textual Entailment Service 
 
-This service, part of the Argumentation Mining Framework (AMF), classifies argument relations between propositions into support, attack, and none. It leverages a pre-trained LLM fine-tuned on the NLI dataset. As a lightweight solution not specifically fine-tuned on an argumentation dataset, it is considered the default AMF argument relation identifier, providing faster classification of argument structures. It can be integrated into the argument mining pipeline alongside other AMF components for further analysis and processing.
+This service, part of the Argument Mining Framework (AMF), classifies argument relations between propositions into support, attack, and none. It leverages a pre-trained LLM fine-tuned on the NLI dataset. As a lightweight solution not specifically fine-tuned on an argumentation dataset, it is considered the default AMF argument relation identifier, providing faster classification of argument structures. It can be integrated into the argument mining pipeline alongside other AMF components for further analysis and processing.
 
 
 ## Brief Overview of the Architecture/Method
@@ -33,9 +33,14 @@ This application leverages a pruned and quantized BART model, fine-tuned on the 
 
 ## Input and Output Formats
 ### Input Format
-- **Text File**: xAIF format input ([xAIF format details](https://wiki.arg.tech/books/amf/page/xaif)).
-- **Example**: 
+- **JSON File**: The input must be in xAIF format. For details on the xAIF JSON format, refer to [xAIF format details](https://wiki.arg.tech/books/amf/page/xaif). xAIF json can be viewed as a dictionary containing list of nodes, edges, locutions, among others. 
+- Argument units and their relations are represented as nodes. Both argument units and argument relations are classified by their type. 
+  - **Argument Units**: Propositions are specified as type "I" nodes, while locution nodes are specified as type "L".
+  - **Argument Relations**: Support relations are denoted as "RA" and attack relations as "CA".
+- The relations between the nodes (argument units and relations) are presented as edges.
+In the following example, the xAIF involves L nodes, I nodes, YA nodes (relation nodes connecting the L nodes with the I nodes).  The nodes indicating the argument relations between the I nodes are missing.
 
+- **Example**: 
 ```python
 {
   "AIF": {
@@ -158,11 +163,8 @@ This application leverages a pruned and quantized BART model, fine-tuned on the 
 
 
 ### Output Format
-The inferred argument structure is returned in the xAIF format, containing nodes, edges, locutions, and other relevant information. In the xAIF:
-- Argument units are specified as type "I" nodes.
-- Argument relations are represented as "RA" type for support and "CA" type for attack relations.
-- The relations between the "I" nodes and argument relation nodes are presented as edges.
-- Example Output:
+The inferred argument structure is returned in the xAIF format, including the argument relation nodes and their connecting edges, while preserving other information in a monotonic fashion. As demonstrated in the following example, the service identifies 1 "RA" node (nodeID 9) between "I" node 3 and 7.
+- Example xAIF Output:
 
 ```python
 {
@@ -311,7 +313,6 @@ The inferred argument structure is returned in the xAIF format, containing nodes
 ### Installation Setup
 #### Using Docker Container
 
-To set up the BERT Textual Entailment Service using Docker, follow these steps:
 
 1. **Clone the Repository:**
    ```sh
@@ -393,9 +394,16 @@ curl -X POST \
 
 ### Using Web Interface
 
-The service can also be used to create a pipeline on our n8n interface. Create an HTTP node, configure the node including specifying the URL of the service and the parameter  (`file`).
+The service can also be used to create a pipeline on our n8n interface. 
+The service can also be used to create a pipeline on our n8n interface. 
+
+1. **Create an HTTP node**
+2. **Configure the node** 
+   - Specify the URL of the service
+   - Include the parameter (`file`)
+
 
 <div style="text-align:center;">
-    <img src="img/n8n_screnshot.jpeg" alt="Image Description" width="100%">
+    <img src="img/n8n_screnshot.jpeg" alt="Image Description" width="40%">
 </div>
 
