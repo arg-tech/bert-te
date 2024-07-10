@@ -20,7 +20,7 @@ This service, part of the Argument Mining Framework (AMF), classifies argument r
   - [Using Programming Interface](#using-programming-interface)
   - [Using cURL](#using-curl)
   - [Using Web Interface](#using-web-interface)
-  
+
 ## Brief Overview of the Architecture/Method
 This application leverages a pruned and quantized BART model, fine-tuned on the MNLI dataset, to perform textual entailment in text-classification task settings. By pruning and quantizing the model, we achieve faster inference times without significantly compromising accuracy. The system maps entailment relations to support relations and contradiction relations to conflicts, for constructing argument structures. This approach ensures the model remains lightweight and suitable for real-time applications within AMF.
 
