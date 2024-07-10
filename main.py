@@ -3,10 +3,11 @@ from src.bert_te import BertArgumentStructure
 from src.utility import handle_errors 
 from src.models import Model
 
-from flask import Flask, request
+from flask import Flask, request,render_template_string
 from prometheus_flask_exporter import PrometheusMetrics
 import logging
 import json
+import markdown2
 
 
 
@@ -40,12 +41,21 @@ def bertte():
 		return result
 	
 	if request.method == 'GET':
-		info = """The Inference Identifier is a component of AMF that detects argument relations between propositions. 
-		This implementation utilises the Hugging Face implementation of BERT for textual entailment. 
-		The model is fine-tuned to recognize inferences, conflicts, and non-relations. 
-		It accepts xIAF as input and returns xIAF as output. 
-		This component can be integrated into the argument mining pipeline alongside a segmenter."""
-		return info	
+		# Read the markdown file
+		with open('README.md', 'r') as file:
+			md_content = file.read()
+
+		# Convert to HTML
+		html_content = markdown2.markdown(md_content)
+
+		# Add CSS link
+		css_link = '<link rel="stylesheet" href="https://example.com/path/to/your/styles.css">'
+		html_with_css = f"<html><head>{css_link}</head><body>{html_content}</body></html>"
+
+		# Render the HTML content as a template
+		return render_template_string(html_with_css)
+		
+
 	
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int("5002"), debug=False)	  
