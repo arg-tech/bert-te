@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   bert-te:
+  container_name: bert_te
     build:
       context: . # Specify the build context
       dockerfile: Dockerfile # Specify the Dockerfile if it's not named 'Dockerfile'
