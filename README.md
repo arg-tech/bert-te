@@ -1,32 +1,34 @@
 
 
-# Default BERT Textual Entailment Service Documentation
+# Default BART Textual Entailment Service 
 
-## Introduction
-This application provides an implementation of BART fine-tuned on NLI dataset for indetifying argument relations. It serves as a default AMF component designed for detecting argument relations between propositions. Entailemtnt relation is mapped to support relation,  conflicts, and non-relations between propositions.
-- It can be integrated into the argument mining pipeline alongside other AMF components for further analysis and processing.
+This service, part of the Argumentation Mining Framework (AMF), classifies argument relations between propositions into support, attack, and none. It leverages a pre-trained LLM fine-tuned on the NLI dataset. As a lightweight solution not specifically fine-tuned on an argumentation dataset, it is considered the default AMF argument relation identifier, providing faster classification of argument structures. It can be integrated into the argument mining pipeline alongside other AMF components for further analysis and processing.
 
 
 ## Brief Overview of the Architecture/Method
-Brief overview of the architecture/method used.
+This application leverages a pruned and quantized BART model, fine-tuned on the MNLI dataset, to perform textual entailment in text-classification task settings. By pruning and quantizing the model, we achieve faster inference times without significantly compromising accuracy. The system maps entailment relations to support relations and contradiction relations to conflicts, for constructing argument structures. This approach ensures the model remains lightweight and suitable for real-time applications within AMF.
 
 - **Dataset**: [Link to datasets](#)
 - **Model ID**: [facebook/bart-large-mnli](https://huggingface.co/facebook/bart-large-mnli)
 - **Repository**: [GitHub repository](https://github.com/arg-tech/bert-te)
 - **Paper**: [Link to published paper](https://arxiv.org/abs/1909.00161)
 
-## Endpoints
+### Endpoints
 
-### /bert-te
+#### /bert-te
 
-#### Details
-- **URL**: `/bert-te`
+**Details**
+- **URL**: `bert-te.amfws.arg.tech/bert-te`
 - **Methods**: `GET`, `POST`
-- **Input**:
-  - **GET**: No parameters. Returns information about Service and its usage.
-  - **POST**: Expects a file upload (`file` parameter) in the xAIF format.
-- **Output**:
-  - **Response**: The route processes the uploaded file, identify argument relation between I-nodes, update the xAIF with the argument relations and returns the updated xAIF as a json file. 
+
+**GET Method**
+- **Input**: No parameters
+- **Output**: Returns information about the service and its usage.
+
+**POST Method**
+- **Input**: Expects a file upload (`file` parameter) in the xAIF format.
+- **Output**: The route processes the uploaded file, identifies argument relations between I-nodes, updates the xAIF with these relations, and returns the updated xAIF as a JSON file.
+
 
 
 ## Input and Output Formats
@@ -296,7 +298,7 @@ The inferred argument structure is returned in the xAIF format, containing nodes
 }
 ```
 
-#
+
 ## Installation
 ### Requirements for Installation
 - torch
