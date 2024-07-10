@@ -4,6 +4,22 @@
 
 This service, part of the Argument Mining Framework (AMF), classifies argument relations between propositions into support, attack, and none. It leverages a pre-trained LLM fine-tuned on the NLI dataset. As a lightweight solution not specifically fine-tuned on an argumentation dataset, it is considered the default AMF argument relation identifier, providing faster classification of argument structures. It can be integrated into the argument mining pipeline alongside other AMF components for further analysis and processing.
 
+## Table of Contents
+- [Brief Overview of the Architecture/Method](#brief-overview-of-the-architecturemethod)
+- [Endpoints](#endpoints)
+  - [/bert-te](#bert-te)
+- [Input and Output Formats](#input-and-output-formats)
+  - [Input Format](#input-format)
+  - [Output Format](#output-format)
+- [Installation](#installation)
+  - [Requirements for Installation](#requirements-for-installation)
+  - [Installation Setup](#installation-setup)
+    - [Using Docker Container](#using-docker-container)
+    - [From Source Without Docker](#from-source-without-docker)
+- [Usage](#usage)
+  - [Using Programming Interface](#using-programming-interface)
+  - [Using cURL](#using-curl)
+  - [Using Web Interface](#using-web-interface)
 
 ## Brief Overview of the Architecture/Method
 This application leverages a pruned and quantized BART model, fine-tuned on the MNLI dataset, to perform textual entailment in text-classification task settings. By pruning and quantizing the model, we achieve faster inference times without significantly compromising accuracy. The system maps entailment relations to support relations and contradiction relations to conflicts, for constructing argument structures. This approach ensures the model remains lightweight and suitable for real-time applications within AMF.
