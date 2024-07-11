@@ -1,6 +1,6 @@
 version: '3.8'
 
-services:
+services: #
   bert-te:
     container_name: bert_te
     build:
