@@ -1,0 +1,89 @@
+meta {
+  name: XAIF Argumentation
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/bert-te
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  Content-Type: multipart/form-data
+}
+
+body:multipart-form {
+  file: @file(test-inputs/xaif_argumentation.json)
+}
+
+tests {
+  // Three I-nodes about energy policy:
+  //   I-node 4: "Renewable energy is essential for reducing carbon emissions."
+  //   I-node 6: "Solar and wind power significantly reduce greenhouse gas output."
+  //   I-node 8: "Fossil fuels are the only reliable source of energy for modern economies."
+  //
+  // Expected relations:
+  //   (4, 6): entailment → RA  (solar/wind supports the case for renewables)
+  //   (4, 8): contradiction → CA (fossil fuel reliance contradicts need for renewables)
+  //   (6, 8): contradiction → CA (reducing emissions contradicts fossil fuel reliance)
+  //
+  // TODO: Run on staging first. If predictions differ from expected, update this test
+  //       with the actual response to lock in the baseline.
+
+  const expectedData = {
+    "AIF": {
+      "descriptorfulfillments": null,
+      "edges": [
+        { "edgeID": 0, "fromID": 0, "toID": 3 },
+        { "edgeID": 1, "fromID": 3, "toID": 4 },
+        { "edgeID": 2, "fromID": 1, "toID": 5 },
+        { "edgeID": 3, "fromID": 5, "toID": 6 },
+        { "edgeID": 4, "fromID": 2, "toID": 7 },
+        { "edgeID": 5, "fromID": 7, "toID": 8 },
+        { "edgeID": 6, "fromID": 4, "toID": 9 },
+        { "edgeID": 7, "fromID": 9, "toID": 6 },
+        { "edgeID": 8, "fromID": 4, "toID": 10 },
+        { "edgeID": 9, "fromID": 10, "toID": 8 },
+        { "edgeID": 10, "fromID": 6, "toID": 11 },
+        { "edgeID": 11, "fromID": 11, "toID": 8 }
+      ],
+      "locutions": [
+        { "nodeID": 0, "personID": 0 },
+        { "nodeID": 1, "personID": 1 },
+        { "nodeID": 2, "personID": 2 }
+      ],
+      "nodes": [
+        { "nodeID": 0, "text": "Renewable energy is essential for reducing carbon emissions.", "type": "L" },
+        { "nodeID": 1, "text": "Solar and wind power significantly reduce greenhouse gas output.", "type": "L" },
+        { "nodeID": 2, "text": "Fossil fuels are the only reliable source of energy for modern economies.", "type": "L" },
+        { "nodeID": 3, "text": "Default Illocuting", "type": "YA" },
+        { "nodeID": 4, "text": "Renewable energy is essential for reducing carbon emissions.", "type": "I" },
+        { "nodeID": 5, "text": "Default Illocuting", "type": "YA" },
+        { "nodeID": 6, "text": "Solar and wind power significantly reduce greenhouse gas output.", "type": "I" },
+        { "nodeID": 7, "text": "Default Illocuting", "type": "YA" },
+        { "nodeID": 8, "text": "Fossil fuels are the only reliable source of energy for modern economies.", "type": "I" },
+        { "nodeID": 9, "text": "Default Inference", "type": "RA" },
+        { "nodeID": 10, "text": "Default Conflict", "type": "CA" },
+        { "nodeID": 11, "text": "Default Conflict", "type": "CA" }
+      ],
+      "participants": [
+        { "firstname": "Speaker", "participantID": 0, "surname": "A" },
+        { "firstname": "Speaker", "participantID": 1, "surname": "B" },
+        { "firstname": "Speaker", "participantID": 2, "surname": "C" }
+      ],
+      "schemefulfillments": null
+    },
+    "dialog": true,
+    "ova": [],
+    "text": {
+      "txt": " Speaker A <span class=\"highlighted\" id=\"0\">Renewable energy is essential for reducing carbon emissions.</span>.<br><br> Speaker B <span class=\"highlighted\" id=\"1\">Solar and wind power significantly reduce greenhouse gas output.</span>.<br><br> Speaker C <span class=\"highlighted\" id=\"2\">Fossil fuels are the only reliable source of energy for modern economies.</span>.<br><br>"
+    }
+  };
+
+  test("Response should match expected value", function () {
+    const receivedData = res.getBody();
+    expect(receivedData).to.deep.equal(expectedData);
+  });
+}
