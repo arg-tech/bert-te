@@ -6,4 +6,4 @@ RUN pip install -r requirements.txt && pip install --no-deps amf-fast-inference=
 COPY . .
 
 EXPOSE 5002
-CMD ["gunicorn", "--workers", "4", "--bind", "0.0.0.0:5002", "main:app"]
+CMD ["gunicorn", "--workers", "1", "--bind", "0.0.0.0:5002", "main:app"]
