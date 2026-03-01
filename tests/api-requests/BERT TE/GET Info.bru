@@ -1,0 +1,22 @@
+meta {
+  name: GET Info
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/bert-te
+  auth: inherit
+}
+
+tests {
+  test("Response status should be 200", function () {
+    expect(res.status).to.equal(200);
+  });
+
+  test("Response should contain service description", function () {
+    const body = res.getBody();
+    expect(body).to.be.a('string');
+    expect(body).to.include('BART');
+  });
+}

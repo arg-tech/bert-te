@@ -1,0 +1,40 @@
+{
+  "AIF": {
+    "descriptorfulfillments": null,
+    "edges": [
+      { "edgeID": 0, "fromID": 0, "toID": 3 },
+      { "edgeID": 1, "fromID": 3, "toID": 4 },
+      { "edgeID": 2, "fromID": 1, "toID": 5 },
+      { "edgeID": 3, "fromID": 5, "toID": 6 },
+      { "edgeID": 4, "fromID": 2, "toID": 7 },
+      { "edgeID": 5, "fromID": 7, "toID": 8 }
+    ],
+    "locutions": [
+      { "nodeID": 0, "personID": 0 },
+      { "nodeID": 1, "personID": 1 },
+      { "nodeID": 2, "personID": 2 }
+    ],
+    "nodes": [
+      { "nodeID": 0, "text": "Renewable energy is essential for reducing carbon emissions.", "type": "L" },
+      { "nodeID": 1, "text": "Solar and wind power significantly reduce greenhouse gas output.", "type": "L" },
+      { "nodeID": 2, "text": "Fossil fuels are the only reliable source of energy for modern economies.", "type": "L" },
+      { "nodeID": 3, "text": "Default Illocuting", "type": "YA" },
+      { "nodeID": 4, "text": "Renewable energy is essential for reducing carbon emissions.", "type": "I" },
+      { "nodeID": 5, "text": "Default Illocuting", "type": "YA" },
+      { "nodeID": 6, "text": "Solar and wind power significantly reduce greenhouse gas output.", "type": "I" },
+      { "nodeID": 7, "text": "Default Illocuting", "type": "YA" },
+      { "nodeID": 8, "text": "Fossil fuels are the only reliable source of energy for modern economies.", "type": "I" }
+    ],
+    "participants": [
+      { "firstname": "Speaker", "participantID": 0, "surname": "A" },
+      { "firstname": "Speaker", "participantID": 1, "surname": "B" },
+      { "firstname": "Speaker", "participantID": 2, "surname": "C" }
+    ],
+    "schemefulfillments": null
+  },
+  "dialog": true,
+  "ova": [],
+  "text": {
+    "txt": " Speaker A <span class=\"highlighted\" id=\"0\">Renewable energy is essential for reducing carbon emissions.</span>.<br><br> Speaker B <span class=\"highlighted\" id=\"1\">Solar and wind power significantly reduce greenhouse gas output.</span>.<br><br> Speaker C <span class=\"highlighted\" id=\"2\">Fossil fuels are the only reliable source of energy for modern economies.</span>.<br><br>"
+  }
+}
