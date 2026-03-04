@@ -3,11 +3,11 @@ from transformers import BartTokenizer
 
 
 from transformers import pipeline
-from amf_fast_inference import model
+from optimum.intel import OVModelForSequenceClassification, OVWeightQuantizationConfig
 import logging
 import json
 
-logging.basicConfig(datefmt='%H:%M:%S', level=logging.DEBUG)
+logging.basicConfig(datefmt='%H:%M:%S', level=logging.INFO)
 #
 
 class Model:
@@ -16,9 +16,9 @@ class Model:
         self.tokenizer = BartTokenizer.from_pretrained(model_path)
         #tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
         #self.model = BartForSequenceClassification.from_pretrained(model_path)
-        loader = model.ModelLoader(model_path)
-        pruned_model = loader.load_model()
-        self.pipe = pipeline("text-classification", model=pruned_model, tokenizer=self.tokenizer )
+        quantization_config = OVWeightQuantizationConfig(bits=8, ratio=1.0)
+        ov_model = OVModelForSequenceClassification.from_pretrained(model_path, export=True, compile=True, quantization_config=quantization_config)
+        self.pipe = pipeline("text-classification", model=ov_model, tokenizer=self.tokenizer)
         self.RA_TRESHOLD = 80
         self.CA_TRESHOLD = 10
 

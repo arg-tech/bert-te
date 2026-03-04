@@ -1,0 +1,30 @@
+[project]
+name = "bert-te"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+
+dependencies = [
+    "flask==3.1.3",
+    "prometheus-flask-exporter==0.23.2",
+    "torch==2.5.1+cpu",
+    "numpy==2.2.6",
+    "transformers==4.39.3",
+    "xaif-eval==0.0.9",
+    "markdown2==2.5.4",
+    "gunicorn==25.1.0",
+    "pillow==12.1.1",
+    "optimum-intel==1.25.2",
+    "openvino==2026.0.0",
+    "nncf==3.0.0",
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+torchvision = { index = "pytorch-cpu" }
