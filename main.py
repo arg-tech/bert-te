@@ -12,7 +12,7 @@ import markdown2
 
 
 
-logging.basicConfig(datefmt='%H:%M:%S', level=logging.DEBUG)
+logging.basicConfig(datefmt='%H:%M:%S', level=logging.INFO)
 
 def load_config(file_path):
         """Load the contents of the config.json file to get the model files."""
