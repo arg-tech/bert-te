@@ -8,14 +8,23 @@ import logging
 import json
 
 class Model:
-    def __init__(self, model_path):
+    def __init__(self, model_path, ov_model_path=None):
         self.model_path = model_path
-        self.tokenizer = BartTokenizer.from_pretrained(model_path)
-        #tokenizer = BertTokenizer.from_pretrained("bert-base-uncased")
-        #self.model = BartForSequenceClassification.from_pretrained(model_path)
-        quantization_config = OVWeightQuantizationConfig(bits=8, ratio=1.0)
-        ov_model = OVModelForSequenceClassification.from_pretrained(model_path, export=True, compile=True, quantization_config=quantization_config)
+        if ov_model_path:
+            logging.info(f"Loading pre-exported OpenVINO model from: {ov_model_path}")
+            self.tokenizer = BartTokenizer.from_pretrained(ov_model_path)
+            ov_model = OVModelForSequenceClassification.from_pretrained(ov_model_path, export=False, compile=True)
+        else:
+            logging.warning(
+                "'ov_model_path' is not set in config.json. "
+                "Falling back to exporting from PyTorch at runtime (slow). "
+                "Run 'uv run scripts/export_model.py' and set 'ov_model_path' to avoid this."
+            )
+            self.tokenizer = BartTokenizer.from_pretrained(model_path)
+            quantization_config = OVWeightQuantizationConfig(bits=8, ratio=1.0)
+            ov_model = OVModelForSequenceClassification.from_pretrained(model_path, export=True, compile=True, quantization_config=quantization_config)
         self.pipe = pipeline("text-classification", model=ov_model, tokenizer=self.tokenizer)
+        logging.info(f"Model ready.")
         self.RA_TRESHOLD = 80
         self.CA_TRESHOLD = 10
 

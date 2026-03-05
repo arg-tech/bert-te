@@ -1,4 +1,5 @@
 {
-    "model_path": "facebook/bart-large-mnli"
+    "model_path": "facebook/bart-large-mnli",
+    "ov_model_path": "arg-tech/bert-te-quantitized-model"
   }
   
