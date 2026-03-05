@@ -1,0 +1,22 @@
+[project]
+name = "bert-te-export"
+version = "0.1.0"
+description = "Export script for bert-te OpenVINO model"
+requires-python = ">=3.12"
+
+dependencies = [
+    "torch==2.5.1+cpu",
+    "transformers==4.39.3",
+    "optimum-intel==1.25.2",
+    "openvino==2026.0.0",
+    "nncf==3.0.0",
+    "pillow==12.1.1",
+]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }

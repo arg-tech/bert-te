@@ -9,23 +9,23 @@ import logging
 import json
 import markdown2
 
-
-
-
-logging.basicConfig(datefmt='%H:%M:%S', level=logging.INFO)
+gunicorn_logger = logging.getLogger('gunicorn.error')
+root_logger = logging.getLogger()
+root_logger.handlers = gunicorn_logger.handlers
+root_logger.setLevel(gunicorn_logger.level)
 
 def load_config(file_path):
         """Load the contents of the config.json file to get the model files."""
         with open(file_path, 'r') as config_file:
             config_data = json.load(config_file)
-            return config_data.get('model_path')
+            return config_data.get('model_path'), config_data.get('ov_model_path')
 
 app = Flask(__name__)
 metrics = PrometheusMetrics(app)
 
 config_file_path = "config/config.json"
-model_path = load_config(config_file_path)
-model = Model(model_path)
+model_path, ov_model_path = load_config(config_file_path)
+model = Model(model_path, ov_model_path)
 
 @metrics.summary('requests_by_status', 'Request latencies by status',
                  labels={'status': lambda r: r.status_code})

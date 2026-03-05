@@ -343,9 +343,32 @@ The inferred argument structure is returned in the xAIF format, including the ar
 3. **Make Required Changes:**
    - Edit the `Dockerfile`, `main.py`, and `docker-compose.yml` files to specify the container name, port number, and other settings as needed.
 
-4. **Build and Run the Docker Container:**
+4. **(Recommended) Pre-export the model:**
+
+   The service loads a pre-exported OpenVINO IR model from HuggingFace Hub (configured via `ov_model_path` in `config/config.json`) to avoid a slow PyTorch → OpenVINO conversion on every startup. To produce the exported model, build the export image and run it once:
    ```sh
-   docker-compose up
+   docker build -f scripts/Dockerfile -t bert-te-export .
+   docker run --rm -v "$(pwd)/exported_model:/app/exported_model" bert-te-export
+   ```
+   Then push it to HuggingFace Hub and set `ov_model_path` in `config/config.json` to the repo ID:
+   ```sh
+   docker run --rm \
+     -v "$(pwd)/exported_model:/app/exported_model" \
+     -e HUGGING_FACE_HUB_TOKEN=<your-token> \
+     bert-te-export python scripts/export_model.py --push-to-hub your-org/bart-large-mnli-ov-int8
+   ```
+
+   **Local testing (before pushing to Hub):** add a bind mount to `docker-compose.yml` and set `ov_model_path` to `/app/exported_model`:
+   ```yaml
+   volumes:
+     - ./exported_model:/app/exported_model:ro
+   ```
+
+   Without a pre-exported model the service falls back to exporting at runtime, which takes several minutes.
+
+5. **Build and Run the Docker Container:**
+   ```sh
+   docker compose up
    ```
 
 #### From Source Without Docker
