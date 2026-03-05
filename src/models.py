@@ -7,9 +7,6 @@ from optimum.intel import OVModelForSequenceClassification, OVWeightQuantization
 import logging
 import json
 
-logging.basicConfig(datefmt='%H:%M:%S', level=logging.INFO)
-#
-
 class Model:
     def __init__(self, model_path):
         self.model_path = model_path

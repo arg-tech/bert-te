@@ -9,10 +9,10 @@ import logging
 import json
 import markdown2
 
-
-
-
-logging.basicConfig(datefmt='%H:%M:%S', level=logging.INFO)
+gunicorn_logger = logging.getLogger('gunicorn.error')
+root_logger = logging.getLogger()
+root_logger.handlers = gunicorn_logger.handlers
+root_logger.setLevel(gunicorn_logger.level)
 
 def load_config(file_path):
         """Load the contents of the config.json file to get the model files."""
